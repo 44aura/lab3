@@ -14,10 +14,12 @@ private:
 public:
 
 	typedef typename Type::value_type Elem;
-    FA(Type _text, Type _pattern){
+    FA(Type _text, Type _pattern, std::vector<int> _states, int _start_state, int _final_state){
         text = _text;
         pattern = _pattern;
-        state_map();
+        states = _states; 
+        start_state = _start_state; 
+        final_state = _final_state;
     }
 
     bool operator()(){
@@ -29,15 +31,5 @@ public:
             }
         }
         return false;
-    }
-
-    void state_map(){
-        std::vector<int> _states(pattern.size() + 1);
-        for(size_t i = 0; i < pattern.size() + 1; i++){
-            _states[i] = i;
-        }
-        states = _states;
-        start_state = *states.begin();
-        final_state = *(states.end() - 1);
     }
 };
