@@ -1,35 +1,36 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <set>
+#include <functional>
 #pragma once
 
 template <typename Type>
 class FA{
-private:
-    Type text;
-    Type pattern;
-    std::vector<int> states;
-    int start_state;
-    int final_state;
 public:
-
 	typedef typename Type::value_type Elem;
-    FA(Type _text, Type _pattern, std::vector<int> _states, int _start_state, int _final_state){
-        text = _text;
-        pattern = _pattern;
+
+    FA(std::set<Elem> _alphabet, std::function<size_t(size_t, Elem)> _trans_f, std::set<size_t> _states, size_t _start_state, std::set<size_t> _final_state){
+        alphabet = _alphabet;
+        trans_f = _trans_f;
         states = _states; 
-        start_state = _start_state; 
+        current_state = _start_state; 
         final_state = _final_state;
     }
 
-    bool operator()(){
-        int current_state = start_state;
-        for(Elem elem:text){
-            (elem == pattern[current_state])? current_state = states[current_state + 1] : current_state = start_state;
-            if(current_state == final_state){
+    bool operator()(Type inputstr){
+        for(Elem elem : inputstr){
+            current_state = trans_f(current_state, elem);
+            if (final_state.find(current_state) != final_state.end()){
                 return true;
             }
         }
         return false;
     }
+private:
+    std::set<Elem> alphabet;
+    std::function<size_t(size_t, Elem)> trans_f;
+    std::set<size_t> states;
+    size_t current_state;
+    std::set<size_t> final_state;
 };
